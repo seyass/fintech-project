@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingView Chart</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .tradingview-widget-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .tradingview-widget-container__widget {
+            flex: 1;
+        }
+        .add-to-watchlist-form {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- TradingView Widget BEGIN -->
+    <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <div class="tradingview-widget-copyright">
+            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+                <span class="blue-text">Track all markets on TradingView</span>
+            </a>
+        </div>
+        <form class="add-to-watchlist-form">
+            <label for="symbol">Add Stock to Watchlist:</label>
+            <input type="text" id="symbol" name="symbol" placeholder="Enter symbol (e.g., NASDAQ:AAPL)">
+            <button type="submit">Add</button>
+        </form>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+                script.async = true;
+                script.innerHTML = JSON.stringify({
+                    "autosize": true,
+                    "symbol": "BITSTAMP:BTCUSD",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "withdateranges": true,
+                    "range": "YTD",
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "watchlist": [
+                        "BITSTAMP:BTCUSD",
+                        "NSE:ONGC"
+                    ],
+                    "details": true,
+                    "hotlist": true,
+                    "calendar": false,
+                    "show_popup_button": true,
+                    "popup_width": "1000",
+                    "popup_height": "650",
+                    "support_host": "https://www.tradingview.com"
+                });
+                document.querySelector('.tradingview-widget-container__widget').appendChild(script);
+
+                // Handle form submission to add to watchlist
+                document.querySelector('.add-to-watchlist-form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    var symbol = document.getElementById('symbol').value;
+                    if (symbol) {
+                        var widget = document.querySelector('.tradingview-widget-container__widget iframe');
+                        if (widget) {
+                            widget.contentWindow.postMessage({
+                                "type": "addSymbol",
+                                "symbol": symbol
+                            }, '*');
+                        }
+                    }
+                });
+            });
+        </script>
+    </div>
+    <!-- TradingView Widget END -->
+</body>
+</html>
+
